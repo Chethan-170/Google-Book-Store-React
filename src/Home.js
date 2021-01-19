@@ -97,6 +97,7 @@ class Home extends Component {
     render() { 
         return ( 
             <React.Fragment>
+                <NavBar/>
                 <Row>
                     <Column className="col-12">
                         <SearchBox handleOnSearch={this.handleSearch} handleOnType={this.handleOnType}/>
