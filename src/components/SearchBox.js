@@ -26,7 +26,7 @@ class SearchBox extends React.Component {
     }
     render() { 
         return (  
-            <div className="main" style={mainStyle}>  
+            <div className="main pt-3" style={mainStyle}>  
                 <div className="input-group">
                     <input type="text" className="form-control" 
                         value={this.state.searchedText}

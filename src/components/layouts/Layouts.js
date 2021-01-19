@@ -1,5 +1,5 @@
 export  const Column = (props)=>{
-    let classes = props.className + " mt-4"
+    let classes = props.className + " pt-3";
     return(
         <div className={classes}>
             {props.children}

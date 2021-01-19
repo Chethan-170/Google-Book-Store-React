@@ -21,7 +21,10 @@ class Home extends Component {
         this.handleOnType = this.handleOnType.bind(this);
     }
     handleOnType(str){
-        this.setState({loading:true})
+        this.setState({
+            loading:true,
+            searchResult:[]
+        })
     }
     handleSearch(searchedText){
         this.setState({searchedText:searchedText});
@@ -30,15 +33,27 @@ class Home extends Component {
         .then(res => res.json())
         .then(
         (result) => {
-            let imgs = result.items.map(item=>{
+            let details = result.items.map(({volumeInfo})=>{
                 try{
-                return item.volumeInfo.imageLinks.thumbnail;
+                    let obj={
+                        title : (volumeInfo.title) || "",
+                        subtitle : (volumeInfo.subtitle) || "",
+                        desc : (volumeInfo.description) || "",
+                        authors : (volumeInfo.authors) || [],
+                        image : (volumeInfo.imageLinks.thumbnail) || (volumeInfo.imageLinks.smallThumbnail) || '',
+                        pageCount : (volumeInfo.pageCount) || "TBD",
+                        rating : (volumeInfo.ratingsCount) || "TBD",
+                        publisher : (volumeInfo.publisher) || "",
+                        publishedDate : (volumeInfo.publishedDate) || "",
+                    }
+                    return obj;
                 }catch(err){
+                    console.log("Error:",err)
                 }
             });
             this.setState({
                 loading:false,
-                searchResult:imgs
+                searchResult:details
             })
           },
           (error) => {
@@ -52,22 +67,32 @@ class Home extends Component {
         fetch(apiUrl)
         .then(res => res.json())
         .then(
-          (result) => {
-              let imgs = result.items.map(item=>{
-                  try{
-                    return item.volumeInfo.imageLinks.thumbnail;
-                  }catch(err){
-                  }
-              });
-              this.setState({newArrivals:imgs})
-          },
-          (error) => {
-              console.log(error)
-          }
-        )
+        (result) => {
+            let details = result.items.map(({volumeInfo})=>{
+                try{
+                    let obj={
+                        title : (volumeInfo.title) || "",
+                        subtitle : (volumeInfo.subtitle) || "",
+                        desc : (volumeInfo.description) || "",
+                        authors : (volumeInfo.authors) || [],
+                        image : (volumeInfo.imageLinks.thumbnail) || (volumeInfo.imageLinks.smallThumbnail) || '',
+                        pageCount : (volumeInfo.pageCount) || "TBD",
+                        rating : (volumeInfo.ratingsCount) || "TBD",
+                        publisher : (volumeInfo.publisher) || "",
+                        publishedDate : (volumeInfo.publishedDate) || "",
+                    }
+                    return obj;
+                }catch(err){
+                    console.log("Error:",err)
+                }
+            });
+            this.setState({newArrivals:details})
+        },
+        (error) => {
+        this.setState({newArrivals:[]})
+        })
     }
     componentDidUpdate(){
-        console.log("Updated");
     }
     render() { 
         return ( 
@@ -79,21 +104,18 @@ class Home extends Component {
                     </Column>
                     <Column className="col-12 text-center">
                         {
-                            (this.state.loading)
-                            ?
-                            <React.Fragment>
-                                <Loader type="ThreeDots" color="#00BFFF" height={50} width={80}/>
-                                <p>Loading.Please wait...!</p>
-                            </React.Fragment>
-                            :   <span></span>
+                            (this.state.loading) &&                            
+                                <React.Fragment>
+                                    <Loader type="ThreeDots" color="#00BFFF" height={50} width={80}/>
+                                    <p>Loading.Please wait...!</p>
+                                </React.Fragment>
                         }
                     </Column>                    
                     <Column className="col-12 pl-5 pr-5">
                         {
-                            (this.state.searchResult.length !== 0)
-                            ?
+                            (this.state.searchResult.length === 0)  ||
                                 <SearchedBooks items={this.state.searchResult}/>
-                            :   ""
+                            
                         }
                     </Column>                   
                     <Column className="col-12 pl-5 pr-5">
