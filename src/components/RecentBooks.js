@@ -1,8 +1,39 @@
 import Loader from 'react-loader-spinner';
-import React from 'react';
+import React,{useState,useEffect} from 'react';
 import {Row,Column} from './layouts/Layouts';
-export const NewArrival = ({items}) => {
-    console.log("New Arrival mounted");
+const url = "https://www.googleapis.com/books/v1/volumes?q=";
+export const NewArrival = () => {
+    const [newArrivals,setNewArrivals] = useState([]);
+    useEffect(()=>{
+        console.log("New Arrival Mounted");
+        fetch(url+"fiction&orderBy=newest")
+        .then(res => res.json())
+        .then(
+        (result) => {
+            let details = result.items.map(({volumeInfo})=>{
+                try{
+                    let obj={
+                        title : (volumeInfo.title) || "",
+                        subtitle : (volumeInfo.subtitle) || "",
+                        desc : (volumeInfo.description) || "",
+                        authors : (volumeInfo.authors) || [],
+                        image : (volumeInfo.imageLinks.thumbnail) || (volumeInfo.imageLinks.smallThumbnail) || '',
+                        pageCount : (volumeInfo.pageCount) || "TBD",
+                        rating : (volumeInfo.ratingsCount) || "TBD",
+                        publisher : (volumeInfo.publisher) || "",
+                        publishedDate : (volumeInfo.publishedDate) || "",
+                    }
+                    return obj;
+                }catch(err){
+                    console.log("Error:",err)
+                }
+            });
+            setNewArrivals(details);
+        },
+        (error) => {
+            setNewArrivals([]);
+        });
+    },[]);
     return ( 
         <div className="card">
             <div className="card-header bg-primary text-white text-center" style={{fontSize:20}}>
@@ -11,9 +42,9 @@ export const NewArrival = ({items}) => {
             <div className="card-body">
                 <Row>
                 {
-                (items.length !== 0)
+                (newArrivals.length !== 0)
                 ?             
-                    items.map((item,ind)=>{
+                    newArrivals.map((item,ind)=>{
                         if(typeof item !== 'undefined' && ind < 8){
                             return <Column key={ind} className="col-lg-3 col-md-6 col-sm-12">
                                         <div className="card text-center" style={{width: 250}}>

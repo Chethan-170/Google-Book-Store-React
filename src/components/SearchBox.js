@@ -1,5 +1,6 @@
-import React from 'react';
-
+import React, { useState } from 'react';
+import Loader from 'react-loader-spinner';
+import { Column, Row } from './layouts/Layouts';
 const mainStyle = {
     width: '90%',
     marginTop: 0,
@@ -12,38 +13,39 @@ const formControl = {
     paddingTop: 10,
     paddingBottom: 10
 }
-class SearchBox extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = { 
-            searchedText : ""
-        }
-        this.handleOnChange = this.handleOnChange.bind(this);
+export const SearchBox = (props)=>{
+    console.log('search bos mounted')
+    const [searchedText,setSearchedText] = useState('');
+    const handleOnChange = (event) =>{
+        setSearchedText(event.target.value);
+        props.setLoading(true);
     }
-    handleOnChange(event){
-        this.setState({ searchedText  : event.target.value })
-        this.props.handleOnType();
-    }
-    componentDidUpdate(){
-        console.log("Searchbos updated");
-    }
-    render() { 
-        console.log("SearchBos mounted");
-        return (  
-            <div className="main pt-3" style={mainStyle}>  
-                <div className="input-group">
-                    <input type="text" className="form-control" 
-                        value={this.state.searchedText}
-                        onChange={this.handleOnChange}
-                        style={formControl} placeholder="Search the Book"/>
-                    <div className="input-group-append">
-                    <button className="btn btn-secondary" onClick={()=>{this.props.handleOnSearch(this.state.searchedText)}} type="button">
-                        <i className="fa fa-search"></i>
-                    </button>
+    return(
+            <Row>
+                <Column className="col-12">
+                    <div className="main pt-3" style={mainStyle}>  
+                        <div className="input-group">
+                            <input type="text" className="form-control" 
+                                value={searchedText}
+                                onChange={handleOnChange}
+                                style={formControl} placeholder="Search the Book"/>
+                            <div className="input-group-append">
+                            <button className="btn btn-secondary" onClick={()=>{props.handleOnSearch(searchedText)}} type="button">
+                                <i className="fa fa-search"></i>
+                            </button>
+                            </div>
+                        </div>  
                     </div>
-                </div>  
-             </div>
-        );
-    }
+                </Column>
+                <Column className="col-12 text-center mt-2">
+                    {
+                        (props.loading) &&                            
+                            <React.Fragment> 
+                                <Loader type="ThreeDots" color="#00BFFF" height={50} width={80}/>
+                                <p>Loading.Please wait...!</p>
+                            </React.Fragment>
+                    }
+                </Column>
+             </Row>
+        )
 } 
-export default SearchBox;

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Row,Column } from './layouts/Layouts';
 export const SearchedBooks = ({items}) => {
-    console.log("searched book mounted:",items)
+    console.log("searched books mounted")
     return ( 
         <div className="card">
             <div className="card-header bg-primary text-white" style={{fontSize:20}}>
