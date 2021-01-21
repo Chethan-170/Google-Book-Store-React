@@ -1,4 +1,4 @@
-import {Component} from 'react';
+import {Component,useState,useEffect} from 'react';
 import React from 'react';
 import { NavBar } from './components/NavBar';
 import {Row,Column} from './components/layouts/Layouts';
@@ -8,6 +8,47 @@ import { NewArrival } from './components/RecentBooks';
 import { SearchedBooks } from './components/SearchedBooks';
 const url = "https://www.googleapis.com/books/v1/volumes?q=";
 var apiUrl;
+export const Home1  = ()=>{
+    const [searchedText,setSearchedText] = useState('');
+    const [loading,setLoading] = useState('');
+    const [newArrivals,setNewArrivals] = useState([]);
+    const [searchResult,setSearchResult] = useState([]);
+    useEffect(()=>{
+        console.log("just mounted");
+        apiUrl=url+"fiction&orderBy=newest";
+        fetch(apiUrl)
+        .then(res => res.json())
+        .then(
+        (result) => {
+            let details = result.items.map(({volumeInfo})=>{
+                try{
+                    let obj={
+                        title : (volumeInfo.title) || "",
+                        subtitle : (volumeInfo.subtitle) || "",
+                        desc : (volumeInfo.description) || "",
+                        authors : (volumeInfo.authors) || [],
+                        image : (volumeInfo.imageLinks.thumbnail) || (volumeInfo.imageLinks.smallThumbnail) || '',
+                        pageCount : (volumeInfo.pageCount) || "TBD",
+                        rating : (volumeInfo.ratingsCount) || "TBD",
+                        publisher : (volumeInfo.publisher) || "",
+                        publishedDate : (volumeInfo.publishedDate) || "",
+                    }
+                    return obj;
+                }catch(err){
+                    console.log("Error:",err)
+                }
+            });
+            setNewArrivals(details);
+            console.log(details);
+        },
+        (error) => {
+            setNewArrivals([]);
+        });
+    },[]);
+    return(
+        <h2>hello</h2>
+    )
+}
 class Home extends Component {
     constructor(props) {
         super(props);
