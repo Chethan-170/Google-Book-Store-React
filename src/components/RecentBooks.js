@@ -2,6 +2,7 @@ import Loader from 'react-loader-spinner';
 import React from 'react';
 import {Row,Column} from './layouts/Layouts';
 export const NewArrival = ({items}) => {
+    console.log("New Arrival mounted");
     return ( 
         <div className="card">
             <div className="card-header bg-primary text-white text-center" style={{fontSize:20}}>

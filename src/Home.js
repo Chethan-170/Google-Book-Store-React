@@ -9,12 +9,46 @@ import { SearchedBooks } from './components/SearchedBooks';
 const url = "https://www.googleapis.com/books/v1/volumes?q=";
 var apiUrl;
 export const Home1  = ()=>{
-    const [searchedText,setSearchedText] = useState('');
     const [loading,setLoading] = useState('');
     const [newArrivals,setNewArrivals] = useState([]);
     const [searchResult,setSearchResult] = useState([]);
+    const handleOnType = ()=>{
+        setLoading(true);
+    }
+    const handleSearch = (searchedText)=>{
+        apiUrl = url + searchedText;
+        fetch(apiUrl)
+        .then(res => res.json())
+        .then(
+        (result) => {
+            let details = result.items.map(({volumeInfo})=>{
+                try{
+                    let obj={
+                        title : (volumeInfo.title) || "",
+                        subtitle : (volumeInfo.subtitle) || "",
+                        desc : (volumeInfo.description) || "",
+                        authors : (volumeInfo.authors) || [],
+                        image : (volumeInfo.imageLinks.thumbnail) || (volumeInfo.imageLinks.smallThumbnail) || '',
+                        pageCount : (volumeInfo.pageCount) || "TBD",
+                        rating : (volumeInfo.ratingsCount) || "TBD",
+                        publisher : (volumeInfo.publisher) || "",
+                        publishedDate : (volumeInfo.publishedDate) || "",
+                    }
+                    return obj;
+                }catch(err){
+                    console.log("Error:",err)
+                }
+            });
+            setLoading(false);
+            setSearchResult(details);
+          },
+          (error) => {
+              console.log(error)
+          }
+        )        
+    }
     useEffect(()=>{
-        console.log("just mounted");
+        console.log("Home1 mounted");
         apiUrl=url+"fiction&orderBy=newest";
         fetch(apiUrl)
         .then(res => res.json())
@@ -39,14 +73,42 @@ export const Home1  = ()=>{
                 }
             });
             setNewArrivals(details);
-            console.log(details);
         },
         (error) => {
             setNewArrivals([]);
         });
     },[]);
+    useEffect(()=>{
+        console.log('Home1 updated');
+    })
     return(
-        <h2>hello</h2>
+        <React.Fragment>
+            <NavBar/>
+            <Row>
+                <Column className="col-12">
+                    <SearchBox handleOnSearch={handleSearch} handleOnType={handleOnType}/>
+                </Column>
+                <Column className="col-12 text-center">
+                    {
+                        (loading) &&                            
+                            <React.Fragment>
+                                <Loader type="ThreeDots" color="#00BFFF" height={50} width={80}/>
+                                <p>Loading.Please wait...!</p>
+                            </React.Fragment>
+                    }
+                </Column>
+                <Column className="col-12 pl-5 pr-5">
+                    {
+                        (searchResult.length === 0)  ||
+                            <SearchedBooks items={searchResult}/>
+                        
+                    }
+                </Column>                            
+                <Column className="col-12 pl-5 pr-5">
+                    <NewArrival items={newArrivals}/>
+                </Column>   
+            </Row>
+        </React.Fragment>
     )
 }
 class Home extends Component {
@@ -104,6 +166,7 @@ class Home extends Component {
     }
 
     componentDidMount(){
+        console.log("Home mounted")
         apiUrl=url+"fiction&orderBy=newest";
         fetch(apiUrl)
         .then(res => res.json())
@@ -134,6 +197,7 @@ class Home extends Component {
         })
     }
     componentDidUpdate(){
+        console.log("Home updated");
     }
     render() { 
         return ( 

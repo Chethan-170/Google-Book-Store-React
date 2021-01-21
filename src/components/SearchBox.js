@@ -22,9 +22,13 @@ class SearchBox extends React.Component {
     }
     handleOnChange(event){
         this.setState({ searchedText  : event.target.value })
-        this.props.handleOnType("hello");
+        this.props.handleOnType();
+    }
+    componentDidUpdate(){
+        console.log("Searchbos updated");
     }
     render() { 
+        console.log("SearchBos mounted");
         return (  
             <div className="main pt-3" style={mainStyle}>  
                 <div className="input-group">
