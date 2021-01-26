@@ -5,13 +5,15 @@ import {Row,Column} from './components/layouts/Layouts';
 import {SearchBox} from './components/SearchBox';
 import { NewArrival } from './components/RecentBooks';
 import { SearchedBooks } from './components/SearchedBooks';
+import { useHistory,Route,Switch,BrowserRouter as Router } from 'react-router-dom';
 const url = "https://www.googleapis.com/books/v1/volumes?q=";
 var apiUrl;
 export const Home  = ()=>{
+    const history = useHistory();
     const [loading,setLoading] = useState('');
     const [searchResult,setSearchResult] = useState([]);
     const showThisBook = (id) =>{
-        console.log(id);
+        history.push('/viewBook/'+id);
     }
     const setLoadingOnInput = ()=>{
         setLoading(true);
@@ -56,7 +58,7 @@ export const Home  = ()=>{
         console.log('Home updated');
     })
     return(
-        <React.Fragment>
+        <Router>
             <NavBar/>
             <Row>
                 <Column className="col-12">
@@ -71,7 +73,12 @@ export const Home  = ()=>{
                 <Column className="col-12 pl-5 pr-5">
                     <NewArrival/>
                 </Column>   
-            </Row>
-        </React.Fragment>
+            </Row>            
+            <Switch> 
+              <Route exact path='/' component={NavBar}></Route> 
+              <Route exact path='/about' component={NavBar}></Route> 
+              <Route exact path='/contact' component={NavBar}></Route> 
+            </Switch> 
+        </Router>
     )
 }
