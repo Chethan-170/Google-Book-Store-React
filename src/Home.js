@@ -10,6 +10,9 @@ var apiUrl;
 export const Home  = ()=>{
     const [loading,setLoading] = useState('');
     const [searchResult,setSearchResult] = useState([]);
+    const showThisBook = (id) =>{
+        console.log(id);
+    }
     const setLoadingOnInput = ()=>{
         setLoading(true);
     } 
@@ -19,9 +22,10 @@ export const Home  = ()=>{
         .then(res => res.json())
         .then(
         (result) => {
-            let details = result.items.map(({volumeInfo})=>{
+            let details = result.items.map(({id,volumeInfo})=>{
                 try{
                     let obj={
+                        id: id,
                         title : (volumeInfo.title) || "",
                         subtitle : (volumeInfo.subtitle) || "",
                         desc : (volumeInfo.description) || "",
@@ -61,7 +65,7 @@ export const Home  = ()=>{
                 <Column className="col-12 pl-5 pr-5">
                     {
                         (searchResult.length === 0)  ||
-                            <SearchedBooks items={searchResult}/>                        
+                            <SearchedBooks items={searchResult} showThisBook={showThisBook}/>                        
                     }
                 </Column>                            
                 <Column className="col-12 pl-5 pr-5">
