@@ -1,11 +1,12 @@
 import React from 'react';
-import {Home} from './Home';
+import Home from './Home';
+import {BrowserRouter as Router} from 'react-router-dom';
 
 function App() {
   return (
-    <React.Fragment>
+    <Router>
       <Home/>
-    </React.Fragment>
+    </Router>
   );
 }
 

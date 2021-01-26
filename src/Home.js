@@ -6,14 +6,22 @@ import {SearchBox} from './components/SearchBox';
 import { NewArrival } from './components/RecentBooks';
 import { SearchedBooks } from './components/SearchedBooks';
 import { useHistory,Route,Switch,BrowserRouter as Router } from 'react-router-dom';
+import { withRouter } from 'react-router';
+import {ViewBook} from './components/ViewBook';
 const url = "https://www.googleapis.com/books/v1/volumes?q=";
+
 var apiUrl;
-export const Home  = ()=>{
+const Home  = ()=>{
     const history = useHistory();
+    const [selectedBook,setSelectedBook] = useState([]);
     const [loading,setLoading] = useState('');
     const [searchResult,setSearchResult] = useState([]);
-    const showThisBook = (id) =>{
-        history.push('/viewBook/'+id);
+    const showThisBook = (bid) =>{
+        let tempBook = searchResult.filter(({id}) =>{
+            return id===bid;
+        });
+        (tempBook.length !== 0) && setSelectedBook(tempBook[0]);
+        history.push('/viewBook/'+bid);
     }
     const setLoadingOnInput = ()=>{
         setLoading(true);
@@ -24,10 +32,10 @@ export const Home  = ()=>{
         .then(res => res.json())
         .then(
         (result) => {
-            let details = result.items.map(({id,volumeInfo})=>{
+            let details = result.items.map(({volumeInfo},ind)=>{
                 try{
                     let obj={
-                        id: id,
+                        id: ind,
                         title : (volumeInfo.title) || "",
                         subtitle : (volumeInfo.subtitle) || "",
                         desc : (volumeInfo.description) || "",
@@ -40,14 +48,17 @@ export const Home  = ()=>{
                     }
                     return obj;
                 }catch(err){
-                    console.log("Error:",err)
+                   // console.log("Error:",err)
                 }
             });
+            let $details = details.filter(book=>{
+                return book !== undefined;
+            })
             setLoading(false);
-            setSearchResult(details);
+            setSearchResult($details);
           },
           (error) => {
-              console.log(error)
+             // console.log(error)
           }
         )        
     }
@@ -58,27 +69,28 @@ export const Home  = ()=>{
         console.log('Home updated');
     })
     return(
-        <Router>
-            <NavBar/>
-            <Row>
-                <Column className="col-12">
-                    <SearchBox loading={loading} setLoading={setLoadingOnInput} handleOnSearch={handleSearch}/>
-                </Column>
-                <Column className="col-12 pl-5 pr-5">
-                    {
-                        (searchResult.length === 0)  ||
-                            <SearchedBooks items={searchResult} showThisBook={showThisBook}/>                        
-                    }
-                </Column>                            
-                <Column className="col-12 pl-5 pr-5">
-                    <NewArrival/>
-                </Column>   
-            </Row>            
+        <React.Fragment>
+            <NavBar/>       
             <Switch> 
-              <Route exact path='/' component={NavBar}></Route> 
-              <Route exact path='/about' component={NavBar}></Route> 
-              <Route exact path='/contact' component={NavBar}></Route> 
+                <Route exact path='/'>
+                    <Row>
+                        <Column className="col-12">
+                            <SearchBox loading={loading} setLoading={setLoadingOnInput} handleOnSearch={handleSearch}/>
+                        </Column>
+                        <Column className="col-12 pl-5 pr-5">
+                            {
+                                (searchResult.length === 0)  ||
+                                    <SearchedBooks items={searchResult} showThisBook={showThisBook}/>                        
+                            }
+                        </Column>                            
+                        <Column className="col-12 pl-5 pr-5">
+                            <NewArrival/>
+                        </Column>   
+                    </Row>                    
+                </Route> 
+                <Route exact path='/viewBook/:id' render={(props) => <ViewBook bookDetails={selectedBook} />}></Route> 
             </Switch> 
-        </Router>
+        </React.Fragment>
     )
-}
+};
+export default withRouter(Home);
