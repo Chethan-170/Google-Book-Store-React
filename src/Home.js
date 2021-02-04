@@ -1,4 +1,5 @@
-import {useState,useEffect} from 'react';
+import {useState,useEffect,useContext} from 'react';
+import { BookSourceContext } from "./BookSourceContext";
 import React from 'react';
 import { NavBar } from './components/NavBar';
 import {Row,Column} from './components/layouts/Layouts';
@@ -8,10 +9,8 @@ import { SearchedBooks } from './components/SearchedBooks';
 import { useHistory,Route,Switch,BrowserRouter as Router } from 'react-router-dom';
 import { withRouter } from 'react-router';
 import {ViewBook} from './components/ViewBook';
-const url = "https://www.googleapis.com/books/v1/volumes?q=";
-
-var apiUrl;
-const Home  = ()=>{
+const Home  = (props)=>{
+    const url = useContext(BookSourceContext);
     const history = useHistory();
     const [selectedBook,setSelectedBook] = useState([]);
     const [loading,setLoading] = useState('');
@@ -27,8 +26,7 @@ const Home  = ()=>{
         setLoading(true);
     } 
     const handleSearch = (searchedText)=>{
-        apiUrl = url + searchedText;
-        fetch(apiUrl)
+        fetch(url + searchedText)
         .then(res => res.json())
         .then(
         (result) => {

@@ -1,9 +1,10 @@
 import Loader from 'react-loader-spinner';
-import React,{useState,useEffect} from 'react';
+import React,{useState,useEffect,useContext} from 'react';
+import { BookSourceContext } from "./../BookSourceContext";
 import {Row,Column} from './layouts/Layouts';
-const url = "https://www.googleapis.com/books/v1/volumes?q=";
 export const NewArrival = () => {
     const [newArrivals,setNewArrivals] = useState([]);
+    const url = useContext(BookSourceContext);
     useEffect(()=>{
         console.log("New Arrival Mounted");
         fetch(url+"fiction&orderBy=newest")
