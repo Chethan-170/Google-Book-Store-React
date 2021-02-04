@@ -1,6 +1,6 @@
 import Loader from 'react-loader-spinner';
 import React,{useState,useEffect,useContext} from 'react';
-import { BookSourceContext } from "./../BookSourceContext";
+import BookSourceContext from "./../BookSourceContext";
 import {Row,Column} from './layouts/Layouts';
 export const NewArrival = () => {
     const [newArrivals,setNewArrivals] = useState([]);

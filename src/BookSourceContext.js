@@ -1,2 +1,3 @@
 import React from 'react';
-export const BookSourceContext = React.createContext();
+const BookSourceContext = React.createContext();
+export default BookSourceContext;

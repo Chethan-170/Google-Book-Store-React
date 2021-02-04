@@ -15,7 +15,7 @@ export const SearchedBooks = ({items,showThisBook}) => {
                         if(typeof item !== 'undefined' && ind < 8){
                             return <Column key={ind} className="col-lg-3 col-md-6 col-sm-12">
                                         <div className="card text-center" style={{width: 250}}>
-                                            <img onClick={()=>{showThisBook(item.id)}} className="img-thumbnail rounded"  src={(item.image)} alt={item.title}/>
+                                            <img onClick={()=>{showThisBook(item.id)}} className="img-thumbnail rounded" src={(item.image)} alt={item.title}/>
                                             <div className="card-body">
                                             <p className="card-text">{item.title} - {item.authors[0]}</p>
                                             </div>
